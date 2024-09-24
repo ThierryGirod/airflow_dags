@@ -82,12 +82,11 @@ def dynamo_to_minio():
 default_args = {
     'owner': 'airflow',
     'start_date': datetime(2023, 9, 24),
-    'retries': 1,
 }
 
 with DAG('bot_dynamo_to_minio_csv',
          default_args=default_args,
-         schedule_interval='*/1 * * * *',
+         schedule_interval='*/5 * * * *',
          catchup=False) as dag:
     
     # Task: DynamoDB to MinIO
