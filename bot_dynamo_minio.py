@@ -7,10 +7,6 @@ import pandas as pd
 from io import BytesIO
 from minio import Minio
 
-# AWS DynamoDB Configuration
-AWS_REGION = 'eu-central-2'
-DYNAMO_TABLE = 'bot'
-
 def get_minio_client():
     """Retrieve MinIO connection details from Airflow and return a Minio client."""
     connection = BaseHook.get_connection('minio_conn')
@@ -29,10 +25,24 @@ def get_minio_client():
         secure=minio_secure
     )
 
+def get_dynamo_client():
+    """Retrieve dynamo connection details from Airflow and return a boto3 client."""
+    connection = BaseHook.get_connection('aws_dynamo')
+    
+    # Extract connection details
+    aws_access_key = connection.login
+    aws_secret_key = connection.password
+    aws_region = 'eu-central-2'
+    
+    return boto3.resource('dynamodb', 
+                          aws_access_key=aws_access_key,
+                          aws_secret_key=aws_secret_key
+                          region_name=aws_region)
+    
 def get_dynamo_data():
     """Fetch data from DynamoDB."""
-    dynamo_client = boto3.resource('dynamodb', region_name=AWS_REGION)
-    table = dynamo_client.Table(DYNAMO_TABLE)
+    dynamo_client = get_dynamo_client()
+    table = dynamo_client.Table('bot')
     
     # Scan DynamoDB table
     response = table.scan()
