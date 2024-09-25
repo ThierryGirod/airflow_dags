@@ -110,26 +110,10 @@ with DAG('bot_dynamo_to_minio_csv',
     submit_spark_job = SparkSubmitOperator(
         task_id='bot_silver_gold_hop',
         name="bot_silver_gold_hop",
-        application_args=[],
         verbose=True,
         conn_id='spark_default',  # The connection defined in Airflow (YARN, Spark Standalone, etc.)
-        # Provide the PySpark code directly
-        application=f"""
-            from pyspark.sql import SparkSession
-
-            # Initialize Spark session
-            spark = SparkSession.builder.appName("exampleApp").getOrCreate()
-
-            # Create a sample DataFrame
-            data = [("Alice", 34), ("Bob", 45), ("Cathy", 29)]
-            df = spark.createDataFrame(data, ["Name", "Age"])
-
-            # Show DataFrame
-            df.show()
-
-            # Stop the Spark session
-            spark.stop()
-        """,
+        
+        application="/bitnami/python/bot_silver_gold_hop.py",
     )
 
     dynamo_to_minio_task >> submit_spark_job
