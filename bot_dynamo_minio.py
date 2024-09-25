@@ -71,7 +71,7 @@ def upload_to_minio(csv_data):
     # Upload CSV file
     minio_client.put_object(
         minio_bucket,
-        'bots.csv',
+        'bronze/bots/bots.csv',
         data=BytesIO(csv_data),
         length=len(csv_data),
         content_type='text/csv'
