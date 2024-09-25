@@ -35,7 +35,7 @@ def get_dynamo_client():
     aws_region = 'eu-central-2'
     
     return boto3.resource('dynamodb', 
-                          aws_access_key=aws_access_key,
+                          aws_access_key_id=aws_access_key,
                           aws_secret_key=aws_secret_key,
                           region_name=aws_region)
     
