@@ -114,7 +114,7 @@ with DAG('bot_dynamo_to_minio_csv',
         conn_id='spark_default',  # The connection defined in Airflow (YARN, Spark Standalone, etc.)
         packages="io.delta:delta-spark_2.12:3.2.0",
         executor_cores=1,
-        executor_memory="512m"
+        executor_memory="512m",
         application="/bitnami/python/bot_silver_gold_hop.py",
     )
 
