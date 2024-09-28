@@ -115,7 +115,7 @@ with DAG('bot_dynamo_to_minio_csv',
         packages="io.delta:delta-spark_2.12:3.2.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262",
         executor_cores=1,
         executor_memory="512m",
-        driver_memory="256m",
+        driver_memory="512m",
         total_executor_cores=1,
         application="/bitnami/python/bot_silver_gold_hop.py",
     )
