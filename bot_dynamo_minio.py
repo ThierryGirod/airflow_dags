@@ -57,7 +57,7 @@ def get_dynamo_data():
 def convert_to_json(df):
     """Convert DataFrame to JSON format in memory."""
     buffer = BytesIO()
-    df.to_json(buffer, index=False)
+    df.to_json(buffer, index=False, orient="records")
     return buffer.getvalue()
 
 def upload_to_minio(json_data):
