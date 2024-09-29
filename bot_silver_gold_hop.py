@@ -2,6 +2,8 @@ from delta import *
 import pyspark
 from pyspark.sql import SparkSession
 from airflow.hooks.base import BaseHook
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
 
 connection = BaseHook.get_connection('minio_conn')
     
@@ -21,15 +23,23 @@ builder = (pyspark.sql.SparkSession.builder.appName("MyApp")
 spark = configure_spark_with_delta_pip(builder).getOrCreate()
 
 # Create a sample DataFrame
-data = [("Alice", 34), ("Bob", 45), ("Cathy", 29)]
-df = spark.createDataFrame(data, ["Name", "Age"])
 
-configs = spark.sparkContext.getConf().getAll()
+df = spark.read.json('s3a://trady/landing/bots.json')
 
-df.write.format("delta").saveAsTable("default.test", mode="overwrite")
+bots_df = df.select("id",
+                    "account", 
+                    col("base_order_size").cast(DoubleType()), 
+                    col("created_at").cast(TimestampType()),
+                    col("enabled").cast(BooleanType()),
+                    "name",
+                    "owner",
+                    "start_order_type",
+                    "strategy",
+                    "type"
+                    
+)
 
-# Show DataFrame
-df.show()
+bots_df.write.format("delta").saveAsTable("default.silver_bots", mode="overwrite")
 
 # Stop the Spark session
 spark.stop()
