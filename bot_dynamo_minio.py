@@ -95,7 +95,7 @@ default_args = {
     'start_date': datetime(2023, 9, 24),
 }
 
-with DAG('bot_dynamo_to_minio_json',
+with DAG('bot_dynamo_to_lakehouse',
          default_args=default_args,
          schedule_interval='*/5 * * * *',
          catchup=False) as dag:
