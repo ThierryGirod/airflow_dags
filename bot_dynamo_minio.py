@@ -54,14 +54,14 @@ def get_dynamo_data():
     
     return df
 
-def convert_to_csv(df):
-    """Convert DataFrame to CSV format in memory."""
+def convert_to_json(df):
+    """Convert DataFrame to JSON format in memory."""
     buffer = BytesIO()
-    df.to_csv(buffer, index=False)
+    df.to_json(buffer, index=False)
     return buffer.getvalue()
 
-def upload_to_minio(csv_data):
-    """Upload CSV data to MinIO using credentials from Airflow connection."""
+def upload_to_minio(json_data):
+    """Upload JSON data to MinIO using credentials from Airflow connection."""
     minio_client = get_minio_client()
     minio_bucket = 'trady'
     
@@ -69,13 +69,13 @@ def upload_to_minio(csv_data):
     if not minio_client.bucket_exists(minio_bucket):
         minio_client.make_bucket(minio_bucket)
     
-    # Upload CSV file
+    # Upload JSON file
     minio_client.put_object(
         minio_bucket,
-        'landing/bots/bots.csv',
-        data=BytesIO(csv_data),
-        length=len(csv_data),
-        content_type='text/csv'
+        'landing/bots/bots.json',
+        data=BytesIO(json_data),
+        length=len(json_data),
+        content_type='application/json'
     )
 
 def dynamo_to_minio():
@@ -83,11 +83,11 @@ def dynamo_to_minio():
     # Step 1: Fetch data from DynamoDB
     df = get_dynamo_data()
     
-    # Step 2: Convert DataFrame to CSV
-    csv_data = convert_to_csv(df)
+    # Step 2: Convert DataFrame to JSON
+    json_data = convert_to_json(df)
     
     # Step 3: Upload to MinIO
-    upload_to_minio(csv_data)
+    upload_to_minio(json_data)
 
 # Airflow DAG definition
 default_args = {
@@ -95,7 +95,7 @@ default_args = {
     'start_date': datetime(2023, 9, 24),
 }
 
-with DAG('bot_dynamo_to_minio_csv',
+with DAG('bot_dynamo_to_minio_json',
          default_args=default_args,
          schedule_interval='*/5 * * * *',
          catchup=False) as dag:
