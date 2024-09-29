@@ -24,7 +24,7 @@ spark = configure_spark_with_delta_pip(builder).getOrCreate()
 
 # Create a sample DataFrame
 
-df = spark.read.json('s3a://trady/landing/bots.json')
+df = spark.read.json('s3a://trady/landing/bots/bots.json')
 
 bots_df = df.select("id",
                     "account", 
