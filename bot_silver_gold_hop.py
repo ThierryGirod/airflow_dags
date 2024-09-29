@@ -12,6 +12,10 @@ minio_secret_key = connection.password
 builder = (pyspark.sql.SparkSession.builder.appName("MyApp")
            .config("spark.hadoop.fs.s3a.access.key", minio_access_key)
            .config("spark.hadoop.fs.s3a.secret.key", minio_secret_key)
+           .config("spark.driver.host", "master1")
+           .config("spark.driver.port", "7077")
+           .config("spark.driver.bindAddress", "0.0.0.0") 
+           .config("spark.driver.blockManager.port", "31311")
            .enableHiveSupport())
 
 spark = configure_spark_with_delta_pip(builder).getOrCreate()
